@@ -29,8 +29,7 @@ class SimAnneal(object):
         #     s2 * np.pi / 10)
 
     def acceptance_probability(self, cost, new_cost, temperature):
-        p = np.exp(- (new_cost - cost) / (self.cst*temperature))
-        return p
+        return np.exp(- (new_cost - cost) / (self.cst*temperature))
 
     def temperature(self, fraction):
         return max(0.01, min(1, 1 - fraction))

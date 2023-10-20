@@ -26,12 +26,12 @@ for d in dates:
         continue
 
     print(d)
-    url = 'http://content.caiso.com/green/renewrpt/%s_DailyRenewablesWatch.txt' % d
+    url = f'http://content.caiso.com/green/renewrpt/{d}_DailyRenewablesWatch.txt'
 
     try:
         page = urllib.request.urlopen(url).read()
     except:
-        print('Day %s failed, continuing...' % d)
+        print(f'Day {d} failed, continuing...')
 
     soup = BeautifulSoup(page, 'lxml')
     t = str(soup.find('p').text).replace('\t\t', ',').replace('\t', ',')

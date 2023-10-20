@@ -27,11 +27,7 @@ for t in range(1,T):
   S[t] = min(S[t-1] + Q[t-1] - R[t-1], K)
 
   # release is based on demand
-  if S[t] + Q[t] > D:
-    R[t] = D
-  else:
-    R[t] = S[t] + Q[t]
-
+  R[t] = min(S[t] + Q[t], D)
   shortage[t] = D-R[t]
 
 

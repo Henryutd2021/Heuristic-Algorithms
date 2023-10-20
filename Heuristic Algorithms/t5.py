@@ -22,15 +22,14 @@ import numpy as np
 
 def func(w):
     x, = w
-    fx = x + 10 * math.sin(5 * x) + 7 * math.cos(4 * x)
-    return fx
+    return x + 10 * math.sin(5 * x) + 7 * math.cos(4 * x)
 
 
 def func2(w):
     x, y = w
-    fxy = 10 ** 9 - (625 - np.square(x - 25)) * (1600 - np.square(y - 10)) * np.sin(x * np.pi / 10) * np.sin(
-        y * np.pi / 10)
-    return fxy
+    return 10**9 - (625 - np.square(x - 25)) * (
+        1600 - np.square(y - 10)
+    ) * np.sin(x * np.pi / 10) * np.sin(y * np.pi / 10)
 
 
 def funTSP(keylist, city_pos):
@@ -38,8 +37,7 @@ def funTSP(keylist, city_pos):
     keylist : shuffle([0,1,2,...,n])
     '''
     queue = np.array([city_pos[i] for i in keylist])
-    totalLen = np.sum(np.sqrt(np.sum(np.square(queue[:-1] - queue[1:]), axis=1)))
-    return totalLen
+    return np.sum(np.sqrt(np.sum(np.square(queue[:-1] - queue[1:]), axis=1)))
 
 
 # if __name__ == '__main__':

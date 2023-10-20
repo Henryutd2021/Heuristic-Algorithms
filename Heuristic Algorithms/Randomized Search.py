@@ -20,7 +20,7 @@ def optimize(bounds, maxIter, f, initVal=np.random.randint(bounds[1])):
     space_x = []
     space_y = []
 
-    for i in range(maxIter):
+    for _ in range(maxIter):
         new_f = f(current_x)
         space_x.append(current_x)
         space_y.append(new_f)
