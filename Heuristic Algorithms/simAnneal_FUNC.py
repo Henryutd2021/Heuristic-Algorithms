@@ -23,13 +23,24 @@ class SimAnneal(object):
 
     ### TSP case
     def iniTSP(self):
-        city_pos = dict(
-            [[i, [[self.mapRange(self.ValueRange[j]), self.mapRange(self.ValueRange[j])] for j in range(self.nd)]] for i
-             in range(self.numCity)])
-        return city_pos
+        return dict(
+            [
+                [
+                    i,
+                    [
+                        [
+                            self.mapRange(self.ValueRange[j]),
+                            self.mapRange(self.ValueRange[j]),
+                        ]
+                        for j in range(self.nd)
+                    ],
+                ]
+                for i in range(self.numCity)
+            ]
+        )
 
     def oldTSP(self):
-        oldT = [[i for i in range(self.numCity)] for j in range(self.Markov_chain)]
+        oldT = [list(range(self.numCity)) for _ in range(self.Markov_chain)]
         for i in range(self.Markov_chain):
             random.shuffle(oldT[i])
         return oldT
@@ -57,8 +68,10 @@ class SimAnneal(object):
     ### function extreme value
 
     def preVar(self):
-        preV = [[self.mapRange(self.ValueRange[j]) for i in range(self.Markov_chain)] for j in range(self.nd)]
-        return preV
+        return [
+            [self.mapRange(self.ValueRange[j]) for _ in range(self.Markov_chain)]
+            for j in range(self.nd)
+        ]
 
     def newVar(self, oldList):
         '''
@@ -67,8 +80,7 @@ class SimAnneal(object):
         :return : list, new solutions based on old solutions
         :T   : current temperature
         '''
-        newList = [[i + (random()*2-1) for i in oldList[j]] for j in range(self.nd)]
-        return newList
+        return [[i + (random()*2-1) for i in oldList[j]] for j in range(self.nd)]
 
     ####
 
@@ -84,10 +96,7 @@ class SimAnneal(object):
         if dE >= 0:
             x, ans = new, func(new)
         else:
-            if math.exp(dE / T) > random():
-                x, ans = new, func(new)
-            else:
-                x, ans = old, func(old)
+            x, ans = (new, func(new)) if math.exp(dE / T) > random() else (old, func(old))
         return [x, ans]
 
 

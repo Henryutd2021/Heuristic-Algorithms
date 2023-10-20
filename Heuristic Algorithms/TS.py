@@ -47,10 +47,7 @@ class TS():
                 x : The solution of the valuation function.
         """
 
-        # Objective function
-        value = x**3-60*x**2+90*x
-        # Return value
-        return value
+        return x**3-60*x**2+90*x
 
     def update_Tabu(self, mode, index=None, solu=None):
         """
@@ -64,7 +61,6 @@ class TS():
                 solu  :
         """
 
-        indices = []  # Store the index the value, which is equal to zero.
         # Update the tenure of tabu object.
         for i in range(len(self.tabu_len_list)):
             if self.tabu_len_list[i] != 0:
@@ -75,14 +71,13 @@ class TS():
             # The add mode
         elif mode == 'add':
             tabuObj = self.valuate(solu)
-            if self.tabu_list[0] == None:
+            if self.tabu_list[0] is None:
                 self.sequence_Tabu(0)
             self.tabu_list[len(self.tabu_list) - 1] = tabuObj
             self.tabu_len_list[len(self.tabu_list) - 1] = self.tabu_len
-        # Update the tabu list depending on the content of the tabu_list_list.
-        for i in range(len(self.tabu_len_list)):
-            if self.tabu_len_list[i] == 0:
-                indices.append(i)
+        indices = [
+            i for i in range(len(self.tabu_len_list)) if self.tabu_len_list[i] == 0
+        ]
         if len(indices) == 1:
             self.sequence_Tabu(indices[0])
         elif len(indices) > 1:
@@ -94,23 +89,18 @@ class TS():
                 if i != max(indices):
                     self.tabu_list[i] = None  # Set the tabu object as None.
                     self.tabu_len_list[i] = 0  # Set the tenure of tabu object as zero.
-            objs = []
-            objs1 = []
-            for obj in self.tabu_list[:maxindex]:
-                if obj != None:
-                    objs.append(obj)
-            for obj in self.tabu_len_list[:maxindex]:
-                if obj != 0:
-                    objs1.append(obj)
-            if objs != []:
+            objs = [obj for obj in self.tabu_list[:maxindex] if obj != None]
+            objs1 = [obj for obj in self.tabu_len_list[:maxindex] if obj != 0]
+            if not objs:
+                for i in range(maxindex):
+                    self.tabu_list[i] = None
+                    self.tabu_len_list[i] = 0
+
+            else:
                 for i in range(len(objs)):
                     self.tabu_list[maxindex - i - 1] = objs[i]
                     self.tabu_len_list[maxindex - i - 1] = objs1[i]
                 for i in range(maxindex - len(objs)):
-                    self.tabu_list[i] = None
-                    self.tabu_len_list[i] = 0
-            else:
-                for i in range(maxindex):
                     self.tabu_list[i] = None
                     self.tabu_len_list[i] = 0
 
@@ -165,23 +155,14 @@ class TS():
                 for k in range(len(self.tabu_list)):
                     if self.valuate(candi_solu[i]) == self.tabu_list[k]:
                         count[i] = 1
-            temp = 0
-            for i in count:
-                if i == 1:
-                    temp += 1
+            temp = sum(1 for i in count if i == 1)
             if temp == self.ccount:
                 isAll = True
             elif temp < self.ccount and temp > 0:
                 isPart = True
 
-            if isAll == True:
-                ############################################
-                #    Part1 : All solutions in Tabu list.   #
-                ############################################
-                temp_tabu_list = []
-                for tabuObj in self.tabu_list:
-                    if tabuObj != None:
-                        temp_tabu_list.append(tabuObj)
+            if isAll:
+                temp_tabu_list = [tabuObj for tabuObj in self.tabu_list if tabuObj != None]
                 index = np.argmin(np.array(temp_tabu_list))  # Obtain the index of minimum value from the tabu list
                 temp_solu = np.array([0.0] * self.vcount)
                 for solu in candi_solu:
@@ -195,7 +176,7 @@ class TS():
                     # Update the tabu list and the tenure of tabu object.
                 self.update_Tabu('release', index=index)
 
-            elif isPart == True:
+            elif isPart:
                 ##################################################
                 #    Part2 : A part of solutions in Tabu list.   #
                 ##################################################
@@ -216,7 +197,7 @@ class TS():
                     #
                     if len(temp_bsolu) == 1:
                         bsolu = temp_bsolu[0]
-                    elif len(temp_bsolu) != 1 and len(temp_bsolu) != 0:
+                    elif len(temp_bsolu) != 0:
                         bsolu = temp_bsolu[0]
                         for solu in temp_bsolu[1:]:
                             if self.valuate(solu) < self.valuate(bsolu):
@@ -246,10 +227,11 @@ class TS():
                     #################################################################
                     notInTabu = []
                     for solu in candi_solu:
-                        count = 0
-                        for i in range(len(self.tabu_list)):
-                            if self.valuate(solu) != self.tabu_list[i]:
-                                count += 1
+                        count = sum(
+                            1
+                            for i in range(len(self.tabu_list))
+                            if self.valuate(solu) != self.tabu_list[i]
+                        )
                         if count == len(self.tabu_list):
                             notInTabu.append(solu)
                     temp_solu = notInTabu[0]
@@ -298,7 +280,7 @@ def main():
     print('最小值', ts.valuate(ts.best_solu))
 
     plt.plot(ts.trace, 'r')
-    title = 'TS: ' + str(ts.valuate(ts.best_solu))
+    title = f'TS: {str(ts.valuate(ts.best_solu))}'
     plt.title(title)
     plt.show()
 

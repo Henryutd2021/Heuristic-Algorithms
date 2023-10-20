@@ -23,7 +23,7 @@ class Population:
 
         # 随机产生初始个体集，并将新一代个体、适应度、选择概率等集合以 0 值进行初始化
         v = 2 ** self.chromosome_size - 1
-        for i in range(self.size):
+        for _ in range(self.size):
             self.individuals.append([random.randint(0, v), random.randint(0, v)])
             self.new_individuals.append([0, 0])
             self.fitness.append(0)
@@ -91,10 +91,7 @@ class Population:
             t = random.randint(1, self.chromosome_size)
             mask1 = 1 << (t - 1)
             mask2 = chrom & mask1
-            if mask2 > 0:
-                chrom = chrom & (~mask2)  # ~ 按位取反运算符：对数据的每个二进制位取反,即把1变为0,把0变为1
-            else:
-                chrom = chrom ^ mask1  # ^ 按位异或运算符：当两对应的二进位相异时，结果为1
+            chrom = chrom & (~mask2) if mask2 > 0 else chrom ^ mask1
         return chrom
 
     # 保留最佳个体

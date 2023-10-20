@@ -78,13 +78,7 @@ def random_neighbour(x, fraction=1):
 
 
 def acceptance_probability(cost, new_cost, temperature):
-    if new_cost < cost:
-        # print("    - Acceptance probabilty = 1 as new_cost = {} < cost = {}...".format(new_cost, cost))
-        return 1
-    else:
-        p = np.exp(- (new_cost - cost) / temperature)
-        # print("    - Acceptance probabilty = {:.3g}...".format(p))
-        return p
+    return 1 if new_cost < cost else np.exp(- (new_cost - cost) / temperature)
 
 
 def temperature(fraction):
